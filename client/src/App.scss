@@ -1,0 +1,16 @@
+@use '~styles/colors' as colors;
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600&family=Nunito+Sans:wght@400;500;600&family=Work+Sans:wght@400;500&display=swap');
+
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  background-color: colors.$dark-blue;
+  color: white;
+}
+
+.hide {
+  display: none;
+}

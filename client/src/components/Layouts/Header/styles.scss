@@ -1,0 +1,66 @@
+@use '~styles/colors' as colors;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  height: 6rem;
+  padding: 1.5rem 3rem;
+  box-sizing: border-box;
+  transition: transform 0.5s ease;
+  border-bottom: 1px solid white;
+  background-color: colors.$light-blue;
+
+  &__logo {
+    height: 100%;
+    opacity: 0.9;
+    cursor: pointer;
+  }
+
+  &__logo:hover {
+    opacity: 1;
+  }
+
+  &__functionality {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__functionality_block {
+    position: relative;
+    cursor: pointer;
+    opacity: 0.9;
+  }
+
+  &__functionality_block:hover {
+    opacity: 1;
+  }
+
+  &__functionality_block > img {
+    height: 2rem;
+  }
+
+  &__reputation {
+  }
+
+  &__countries {
+  }
+
+  &__settings {
+    transform: rotate(15deg);
+  }
+
+  &__settings:hover {
+    animation: spin 2s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(15deg);
+  }
+  100% {
+    transform: rotate(375deg);
+  }
+}
