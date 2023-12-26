@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import io, { Socket } from 'socket.io-client'
 import Peer from 'simple-peer'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
 import { useSelector } from 'react-redux'
 
 import { userDevicesSelector, userSelector } from 'redux/selectors/userSelectors'
@@ -21,55 +20,68 @@ const Main = () => {
   const interlocutorVideo = useRef<HTMLVideoElement | null>(null)
   const connectionRef = useRef<Peer.Instance | null>(null)
 
-  useEffect(() => {
-    setSocket(io('https://192.168.0.38:8080'))
-  }, [])
-
   const userDevices = useSelector(userDevicesSelector)
   const user = useSelector(userSelector)
 
   useEffect(() => {
+    setSocket(io('https://192.168.0.38:8080'))
+  }, [])
+
+  useEffect(() => {
+    navigator.mediaDevices.getUserMedia({ video: { deviceId: userDevices.videoInput }, audio: true })
+    .then((currentStream) => {
+      setStream(currentStream)
+      if (myVideo.current) {
+        myVideo.current.srcObject = currentStream
+      }
+      setBrokenCamera(false)
+    }).catch(() => setBrokenCamera(true))
+  }, [userDevices.videoInput])
+
+  useEffect(() => {
     if (socket) {
-      navigator.mediaDevices.getUserMedia({ video: { deviceId: userDevices.videoInput }, audio: true })
-      .then((currentStream) => {
-        setStream(currentStream)
-        if (myVideo.current) {
-          myVideo.current.srcObject = currentStream
-        }
-        setBrokenCamera(false)
-      }).catch(() => setBrokenCamera(true))
-      
       socket.on('getId', (id) => setUserId(id))
+    }
+  }, [socket])
+
+  useEffect(() => {
+    if (socket && stream) {
       socket.on('connectInterlocutorToUser', ({ signal, from }) =>  {
         const peer = new Peer({ initiator: false, trickle: false, stream })
         peer.on('signal', (signal) => {
           socket.emit('answerCall', { signal, userId: from })
         })
         peer.on('stream', (currentStream) => {
+          console.log('I get video')
           if (interlocutorVideo.current) interlocutorVideo.current.srcObject = currentStream
         })
+
         peer.signal(signal)
+        
+        connectionRef.current?.destroy()
         connectionRef.current = peer
       })
     }
-  }, [socket, userDevices.videoInput])
+  }, [userId, stream?.id])
 
   const startCommunication = () => {
-    if (socket) {
+    if (socket && userId) {
       try {
         const peer = new Peer({ initiator: true, trickle: false, stream })
-
+        
         peer.on('signal', (signal) => {
           socket.emit('startCommunication', { signal, from: userId, country: 'pl', reputation: user.reputation, restrictionOn: true })
         })
         peer.on('stream', (currentStream) => {
-          console.log('Pipla')
           if (interlocutorVideo.current) interlocutorVideo.current.srcObject = currentStream
         })
+
         socket.on('callAccepted', (signal) => {
+          console.log('callAccepter', signal)
           peer.signal(signal)
+          console.log(peer)
         })
-        
+
         connectionRef.current = peer
       } catch (error) {
         console.error(error)
@@ -94,7 +106,7 @@ const Main = () => {
         className='main__start-button'
       />
         <div className={`main__video`}>
-          <video playsInline ref={interlocutorVideo} autoPlay width="600" />
+          <video playsInline ref={interlocutorVideo} autoPlay />
         </div>
     </div>
   )
