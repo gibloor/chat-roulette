@@ -23,14 +23,16 @@
 
   &__functionality {
     display: flex;
-    align-items: center;
     gap: 1rem;
   }
 
   &__functionality_block {
+    display: flex;
+    align-items: center;
     position: relative;
     cursor: pointer;
     opacity: 0.9;
+    height: 100%;
   }
 
   &__functionality_block:hover {

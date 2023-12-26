@@ -6,7 +6,7 @@ import Layouts from 'components/Layouts/Layouts'
 import Main from 'components/pages/Main/Main'
 import NoPage from 'components/pages/NoPage/NoPage'
 import { userSelector } from 'redux/selectors/userSelectors'
-import { changeDeviceAction, signIn } from 'redux/actions/userActions'
+import { autoSingInAction, changeDeviceAction } from 'redux/actions/userActions'
 
 import './App.scss'
 
@@ -19,9 +19,10 @@ const App = () => {
 
   // const x = useSelector(userSelector)
 
-  // useEffect(() => {
-  //   console.log(x)
-  // }, [x])
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (token) autoSingInAction(dispatch, { token })
+  })
 
   useEffect(() => {
     changeDeviceAction(dispatch, { id: localStorage.getItem('videoInput') || '', name: 'videoInput' })

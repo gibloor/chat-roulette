@@ -2,9 +2,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import type { RootState } from '../store'
 
-type SignIn = {
-  login: string
-  password: string
+export type SignIn = {
+  name: string
+  reputation: number
 }
 
 export type Device = {
@@ -12,24 +12,19 @@ export type Device = {
   id: string
 }
 
-type InitialState = {
-  [key: string]: string,
-  id: string,
+type InitialState = SignIn & {
+  [key: string]: string | number,
   videoInput: string,
   audioInput: string,
   audioOutput: string,
 }
 
 const initialState: InitialState = {
-  id: '',
+  name: '',
+  reputation: 0,
   videoInput: '',
   audioInput: '',
   audioOutput: '',
-}
-
-const login = async () => {
-  console.log('ky')
-  return 4
 }
 
 export const userSlice = createSlice({
@@ -37,9 +32,10 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     authorization: (state, action: PayloadAction<SignIn>) => {
-      const x = login()
-      console.log(x)
-      state.id = '25'
+      return {
+        ...state,
+        ...action.payload,
+      }
     },
     deauthorization: () => {
 

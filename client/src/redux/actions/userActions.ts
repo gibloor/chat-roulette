@@ -1,24 +1,58 @@
 import { Dispatch } from "@reduxjs/toolkit"
+import axios from "axios"
 import { authorization, changeDevice, Device } from "redux/reducers/userReducer"
+import { DOMAIN } from "redux/reduxVariables"
+
+type GoogleSignInProps = {
+  credential: string
+}
+
+type Token = {
+  token: string
+}
 
 type SignInProps = {
-  login: string,
-  password: string,
+  token: string
+  name: string
+  reputation: number
 }
 
-export const signIn = async (dispatch: Dispatch, props: SignInProps) => {
-  const x = await console.log('call to db')
-  await dispatch(authorization({login: '', password: ''}))
+const signIn = async (dispatch: Dispatch, props: SignInProps) => {
+  localStorage.setItem('token', props.token)
+
+  await dispatch(authorization({ name: props.name, reputation: props.reputation }))
 }
 
-export const signUp = async () => {
-
-}
+// export const signUp = async () => {  }
 
 export const signOut = async () => {
 
 }
 
+export const googleSignInAction = async (dispatch: Dispatch, props: GoogleSignInProps ) => {
+  try {
+    if (props.credential) {
+      const authResult = await axios.post(`${DOMAIN}/user/googleSignIn`, props)
+      await signIn(dispatch, authResult.data)
+    } else {
+      console.error('Credential missed')
+    }
+
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export const changeDeviceAction = async (dispatch: Dispatch, props: Device) => {
   await dispatch(changeDevice(props))
+}
+
+export const autoSingInAction = async (dispatch: Dispatch, props: Token) => {
+  try {
+    const headers = {authorization: `Bearer ${props.token}`} 
+    const authResult = await axios.post(`${DOMAIN}/user/autoSignIn`, {}, { headers: headers })
+    await signIn(dispatch, authResult.data)
+  } catch (err) {
+    console.error(err)
+  }
 }

@@ -1,11 +1,18 @@
-import express from "express"
-import { createServer } from "https"
-import { Server } from "socket.io"
-import { readFileSync } from "fs"
+import express from 'express'
+import { createServer } from 'https'
+import { Server } from 'socket.io'
+import { readFileSync } from 'fs'
 import cors from 'cors'
+import mongoose from 'mongoose'
+import dotenv from 'dotenv'
+
+import user from './routes/user'
+import interlocutor from './routes/interlocutor'
+import channelsHandler from './channelsHandler'
+
+dotenv.config()
 
 const PORT = process.env.PORT || 8080
-
 const app = express()
 
 const server = createServer({
@@ -15,28 +22,34 @@ const server = createServer({
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
+    origin: '*',
+    methods: ['GET', 'POST']
   }
 })
 
+const mongoString = process.env.DATABASE_URL
+
+if (mongoString) {
+  mongoose.connect(mongoString)
+  
+  const database = mongoose.connection
+  database.on('error', (error) => {
+    console.log(error)
+  })
+
+  database.once('connected', () => {
+    console.log('Database Connected')
+  })
+} else {
+  console.log('DATABASE_URL - undefined')
+}
+
 app.use(cors())
+app.use(express.json())
 
-app.get('/', (req, res) => {
-    res.send('Hello World')
-})
+app.use('/user', user)
+app.use('/interlocutor', interlocutor)
 
-io.on("connection", (socket) => {
-  socket.emit("me", socket.id)
-  socket.on("disconnect", () => {
-    socket.broadcast.emit("callEnded")
-  })
-  socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-    io.to(userToCall).emit("callUser", { signal: signalData, from, name })
-  })
-  socket.on("answerCall", (data) => {
-    io.to(data.to).emit("callAccepted", data.signal)
-  })
-})
+channelsHandler(io)
 
 server.listen(PORT, () => console.log(`Server is running on port ${PORT}`))

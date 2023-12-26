@@ -1,0 +1,1 @@
+export const DOMAIN = process.env.REACT_APP_DOMAIN || 'https://192.168.0.38:8080' // 'https://192.168.0.38:8080'
