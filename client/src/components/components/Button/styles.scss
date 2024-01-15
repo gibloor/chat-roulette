@@ -1,7 +1,27 @@
+@use '~styles/colors' as colors;
+
 .button {
   padding: 10px 15px;
   font-size: 20px;
   font-weight: bold;
   border-radius: 10px;
   cursor: pointer;
+  background-color: colors.$light-blue;
+  color: azure;
+  border: 1px solid azure;
+  opacity: 0.85;
+
+  &__long {
+    min-width: 200px;
+    min-height: 50px;
+  }
+}
+
+.button:hover {
+  opacity: 1;
+}
+
+.button:disabled {
+  opacity: 0.85;
+  cursor: not-allowed;
 }

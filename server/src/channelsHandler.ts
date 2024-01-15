@@ -12,20 +12,14 @@ type Restriction = {
 
 const channelsHandler = (io: Server) => {
   io.on('connection', (socket) => {
-    // user gets his id
+    
     socket.emit('getId', socket.id)
 
-    //
-    socket.on('disconnect', () => {
+    // socket.on('changeInterlocutor', () => {
       // socket.broadcast.emit('callEnded')
-    })
-
-    socket.on('changeInterlocutor', () => {
-      // socket.broadcast.emit('callEnded')
-    })
+    // })
 
     socket.on("answerCall", ({ signal, userId }) => {
-      console.log(userId, 'Initiator Id')
       io.to(userId).emit("callAccepted", signal)
     })
 
@@ -37,10 +31,8 @@ const channelsHandler = (io: Server) => {
       if (country) restriction.country = country
       if (reputation) restriction.reputation = reputation
 
-      const interlocutor = await Interlocutor.findOne(
-        // restriction
-      ).exec()
-      
+      const interlocutor = await Interlocutor.findOne(restrictionOn ? restriction : undefined).exec()
+
       if (interlocutor) {
         await io.to(interlocutor.userId).emit('connectInterlocutorToUser', { signal, from })
 

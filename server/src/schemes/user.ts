@@ -14,17 +14,14 @@ const userSchema = new mongoose.Schema({
     required: true,
     type: Number,
     default: 50,
+  },
+  banned: {
+    type: Boolean,
+    default: false
+  },
+  banDuration: {
+    type: Date,
   }
-  // password: {
-  //   required: true,
-  //   type: String
-  // },
-  // words: [
-  //   {  
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'UserWords'
-  //   }
-  // ]
 })
 
 const User = mongoose.model('User', userSchema)

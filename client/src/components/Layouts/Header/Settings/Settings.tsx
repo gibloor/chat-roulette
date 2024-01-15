@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import OutsideClickHandler from 'react-outside-click-handler';
 
 import { changeDeviceAction } from 'redux/actions/userActions'
 import { userDevicesSelector } from 'redux/selectors/userSelectors'
 
 import './styles.scss'
 
-const Settings = () => {
+type SettingsProps = {
+  close: () => void
+}
+
+const Settings = (props: SettingsProps) => {
   const dispatch = useDispatch()
   
   const [audioInputDevices, setAudioInputDevices] = useState<MediaDeviceInfo[]>([])
@@ -30,43 +35,47 @@ const Settings = () => {
 
   return (
     <div className='settings'>
-
-      <div>
-        <p>Audio input</p>
+      <OutsideClickHandler onOutsideClick={(e) => {
+        if (e.target instanceof HTMLElement && 'alt' in e.target) {
+          e.target.alt !== 'Settings' && props.close() 
+        }
+      }}>
+        <div>
+          <p>Audio input</p>
+          
+          <select onChange={(e) => changeDevice(e.target.value, 'audioInput')} value={userDevices.audioInput}>
+            {audioInputDevices.map(device => (
+              <option value={device.deviceId}>
+                {device.label}
+              </option>
+            ))}
+          </select>
+        </div>
         
-        <select onChange={(e) => changeDevice(e.target.value, 'audioInput')} value={userDevices.audioInput}>
-          {audioInputDevices.map(device => (
-            <option value={device.deviceId}>
-              {device.label}
-            </option>
-          ))}
-        </select>
-      </div>
-      
-      <div>
-        <p>Audio output</p>
+        <div>
+          <p>Audio output</p>
 
-        <select onChange={(e) => changeDevice(e.target.value, 'audioOutput')} value={userDevices.audioOutput}>
-          {audioOutputDevices.map(device => (
-            <option value={device.deviceId}>
-              {device.label}
-            </option>
-          ))}
-        </select>
-      </div>
+          <select onChange={(e) => changeDevice(e.target.value, 'audioOutput')} value={userDevices.audioOutput}>
+            {audioOutputDevices.map(device => (
+              <option value={device.deviceId}>
+                {device.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div>
-        <p>Video input</p>
+        <div>
+          <p>Video input</p>
 
-        <select onChange={(e) => changeDevice(e.target.value, 'videoInput')} value={userDevices.videoInput}>
-          {videoInputDevices.map(device => (
-            <option value={device.deviceId}>
-              {device.label}
-            </option>
-          ))}
-        </select>
-      </div>
-
+          <select onChange={(e) => changeDevice(e.target.value, 'videoInput')} value={userDevices.videoInput}>
+            {videoInputDevices.map(device => (
+              <option value={device.deviceId}>
+                {device.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </OutsideClickHandler>
     </div>
   )
 }

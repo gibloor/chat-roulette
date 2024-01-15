@@ -1,9 +1,11 @@
 import express from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import fs from 'fs'
 
 import User from '../schemes/user'
 import validateToken from '../middlewares/validateToken'
+import BanRequest from '../schemes/banRequest'
 
 type DecodedToken = {
   iss: string
@@ -32,7 +34,7 @@ const createToken = async (id: string) => {
     const token = await jwt.sign({ id }, secretKey, { expiresIn: '7d' })
     return token
   } catch (error) {
-    throw new Error('Failed to create token');
+    throw new Error('Failed to create token')
   }
 }
 
@@ -44,7 +46,7 @@ user.post('/autoSignIn', validateToken, async (req, res) => {
       
       await res.json({ token, reputation: userData.reputation, name: userData.name })
     } else {
-      res.status(400).json({ message: 'User not found' });
+      res.status(400).json({ message: 'User not found' })
     }
   } catch (error: any) {
     res.status(400).json({message: error.message})
@@ -76,6 +78,31 @@ user.post('/googleSignIn', async (req, res) => {
     }
   } catch (error: any) {
     console.log(error)
+    res.status(400).json({message: error.message})
+  }
+})
+
+user.post('/ban', async (req, res) => {
+  try {
+    const screenshotDataUrl = req.body.picture
+
+    const newBanrequest = new BanRequest({
+      userId: 'req.body.id',
+      requestDate: new Date()
+    })
+
+    const banData = await newBanrequest.save()
+    const id = await banData._id.toString()
+
+    const base64Data = screenshotDataUrl.replace(/^data:image\/png;base64,/, '')
+
+    fs.writeFile(`./src/banPictures/${id}.png`, base64Data, 'base64', (err) => {
+      if (err) throw err
+      console.log('The file has been saved!')
+    })
+
+  } catch (error: any) {
+    console.log(error.message)
     res.status(400).json({message: error.message})
   }
 })

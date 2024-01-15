@@ -5,6 +5,7 @@ import { readFileSync } from 'fs'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
+import bodyParser from 'body-parser'
 
 import user from './routes/user'
 import interlocutor from './routes/interlocutor'
@@ -44,6 +45,7 @@ if (mongoString) {
   console.log('DATABASE_URL - undefined')
 }
 
+app.use(bodyParser.json({ limit: '10mb' }))
 app.use(cors())
 app.use(express.json())
 
