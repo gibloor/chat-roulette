@@ -19,13 +19,13 @@ const channelsHandler = (io: Server) => {
       // socket.broadcast.emit('callEnded')
     // })
 
-    socket.on("answerCall", ({ signal, userId }) => {
-      io.to(userId).emit("callAccepted", signal)
+    socket.on("answerCall", ({ signal, socketId, userId }) => {
+      io.to(socketId).emit("callAccepted", { signal, userId})
     })
 
-    socket.on('startCommunication', async ({ signal, from, country, reputation, restrictionOn }) => {
+    socket.on('startCommunication', async ({ signal, socketId, userId, country, reputation, restrictionOn }) => {
       const restriction: Restriction = {
-        userId: { $ne: from }
+        userId: { $ne: userId }
       }
 
       if (country) restriction.country = country
@@ -34,12 +34,13 @@ const channelsHandler = (io: Server) => {
       const interlocutor = await Interlocutor.findOne(restrictionOn ? restriction : undefined).exec()
 
       if (interlocutor) {
-        await io.to(interlocutor.userId).emit('connectInterlocutorToUser', { signal, from })
+        await io.to(interlocutor.socketId).emit('connectInterlocutorToUser', { signal, socketId, userId })
 
         await Interlocutor.deleteOne(interlocutor._id)
       } else {
         const newInterlocutor = new Interlocutor({
-          userId: from,
+          socketId: socketId,
+          userId: userId,
           country: country,
           reputation: reputation,
           restrictionOn: restrictionOn,

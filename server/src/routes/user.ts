@@ -44,7 +44,7 @@ user.post('/autoSignIn', validateToken, async (req, res) => {
     if (userData) {
       const token = await createToken(userData._id.toString())
       
-      await res.json({ token, reputation: userData.reputation, name: userData.name })
+      await res.json({ token, reputation: userData.reputation, name: userData.name, id: userData._id.toString() })
     } else {
       res.status(400).json({ message: 'User not found' })
     }
@@ -73,7 +73,7 @@ user.post('/googleSignIn', async (req, res) => {
         const id = await userData._id.toString()
         const token = await createToken(id)
 
-        await res.json({ token, reputation: userData.reputation, name: userData.name })
+        await res.json({ token, reputation: userData.reputation, name: userData.name, id: id })
       }
     }
   } catch (error: any) {
@@ -85,9 +85,10 @@ user.post('/googleSignIn', async (req, res) => {
 user.post('/ban', async (req, res) => {
   try {
     const screenshotDataUrl = req.body.picture
+    const userId = req.body.userId
 
     const newBanrequest = new BanRequest({
-      userId: 'req.body.id',
+      userId: userId,
       requestDate: new Date()
     })
 

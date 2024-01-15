@@ -15,8 +15,8 @@ import './styles.scss'
 const Main = () => {
   const [socket, setSocket] = useState<Socket | null>(null)
   const [stream, setStream] = useState<MediaStream | undefined>()
-  const [userId, setUserId] = useState('')
-  // const [interlocutorId, setInterlocutorId] = useState('')
+  const [socketId, setSocketId] = useState('')
+  const [interlocutorId, setInterlocutorId] = useState('')
   const [brokenCamera, setBrokenCamera] = useState(false)
   const [chatStarted, setChatStarted] = useState(false)
 
@@ -32,7 +32,7 @@ const Main = () => {
   }, [])
 
   const startCommunication = () => {
-    if (socket && userId) {
+    if (socket && socketId) {
       try {
         const peer = new Peer({ initiator: true, trickle: false, stream })
         
@@ -40,13 +40,14 @@ const Main = () => {
         connectionRef.current?.destroy(new Error('External connection'))
 
         peer.on('signal', (signal) => {
-          socket.emit('startCommunication', { signal, from: userId, country: 'pl', reputation: user.reputation, restrictionOn: true })
+          socket.emit('startCommunication', { signal, socketId: socketId, userId: user.id, country: 'pl', reputation: user.reputation, restrictionOn: true })
         })
         peer.on('stream', (currentStream) => {
           if (interlocutorVideo.current) interlocutorVideo.current.srcObject = currentStream
         })
 
-        socket.on('callAccepted', (signal) => {
+        socket.on('callAccepted', ({ signal, userId }) => {
+          setInterlocutorId(userId)
           peer.signal(signal)
         })
 
@@ -93,7 +94,7 @@ const Main = () => {
 
   useEffect(() => {
     if (socket) {
-      socket.on('getId', (id) => setUserId(id))
+      socket.on('getId', (id) => setSocketId(id))
     }
   }, [socket])
 
@@ -101,10 +102,11 @@ const Main = () => {
     if (socket && stream) {
       socket.off('connectInterlocutorToUser')
 
-      socket.on('connectInterlocutorToUser', ({ signal, from }) =>  {
+      socket.on('connectInterlocutorToUser', ({ signal, socketId, userId }) =>  {
+        setInterlocutorId(userId)
         const peer = new Peer({ initiator: false, trickle: false, stream })
         peer.on('signal', (signal) => {
-          socket.emit('answerCall', { signal, userId: from })
+          socket.emit('answerCall', { signal, socketId: socketId, userId: user.id })
         })
         peer.on('stream', (currentStream) => {
           if (interlocutorVideo.current) interlocutorVideo.current.srcObject = currentStream
@@ -136,7 +138,7 @@ const Main = () => {
         connectionRef.current = peer
       })
     }
-  }, [userId, stream?.id])
+  }, [socketId, stream?.id])
 
   const stop = () => {
     connectionRef.current?.destroy(new Error('Manually stopped'))
@@ -150,7 +152,8 @@ const Main = () => {
       const canvas = await html2canvas(videoElement)
       const screenshotDataUrl = await canvas.toDataURL('image/png')
       await axios.post(`${DOMAIN}/user/ban`, {
-        picture: screenshotDataUrl
+        picture: screenshotDataUrl,
+        userId: interlocutorId
       })
     }
   }

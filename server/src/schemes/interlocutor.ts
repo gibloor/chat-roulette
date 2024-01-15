@@ -1,6 +1,10 @@
 import mongoose from 'mongoose'
 
 const interlocutorSchema = new mongoose.Schema({
+  socketId: {
+    required: true,
+    type: String,
+  },
   userId: {
     required: true,
     type: String,

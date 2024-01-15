@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import type { RootState } from '../store'
 
 export type SignIn = {
+  id: string
   name: string
   reputation: number
 }
@@ -13,13 +14,14 @@ export type Device = {
 }
 
 type InitialState = SignIn & {
-  [key: string]: string | number,
-  videoInput: string,
-  audioInput: string,
-  audioOutput: string,
+  [key: string]: string | number
+  videoInput: string
+  audioInput: string
+  audioOutput: string
 }
 
 const initialState: InitialState = {
+  id: '',
   name: '',
   reputation: 0,
   videoInput: '',

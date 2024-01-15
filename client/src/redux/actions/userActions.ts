@@ -13,6 +13,7 @@ type Token = {
 }
 
 type SignInProps = {
+  id: string
   token: string
   name: string
   reputation: number
@@ -21,7 +22,7 @@ type SignInProps = {
 const signIn = async (dispatch: Dispatch, props: SignInProps) => {
   localStorage.setItem('token', props.token)
 
-  await dispatch(authorization({ name: props.name, reputation: props.reputation }))
+  await dispatch(authorization({ name: props.name, reputation: props.reputation, id: props.id }))
 }
 
 // export const signUp = async () => {  }
