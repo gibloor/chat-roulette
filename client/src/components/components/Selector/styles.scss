@@ -1,0 +1,72 @@
+@use '~styles/colors' as colors;
+
+.selector {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 375px;
+
+  &__label {
+    color: colors.$text-title
+  }
+
+  &__field {
+    background-color: colors.$interface-parts-background;
+    padding: 10px;
+    cursor: pointer;
+    color: colors.$text-title;
+    overflow: hidden;
+    font-size: 14px;
+  }
+
+  &__value {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &_open {
+      border-bottom: 1px solid colors.$interface-border;
+      border-radius: 10px 10px 0px 0px;
+    }
+  
+    &_closed {
+      border-radius: 10px;
+    }
+  }
+
+  &__arrow {
+    height: 15px;
+    transition: transform 0.25s ease;
+
+    &_open {
+      transform: rotate(-90deg);
+    }
+
+    &_closed {
+      transform: rotate(-270deg);
+    }
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background-color: colors.$interface-parts-background;
+    border: 1px solid colors.$interface-border;
+    border-radius: 10px;
+  }
+
+  &__option {
+    opacity: 0.65;
+    border-bottom: 1px solid colors.$interface-border;
+  }
+
+  &__option:last-child {
+    border-bottom: none;
+    border-radius: 0px 0px 10px 10px;
+  }
+
+  &__option:hover {
+    opacity: 1;
+  }
+}

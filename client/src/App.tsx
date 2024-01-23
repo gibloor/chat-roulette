@@ -1,24 +1,17 @@
 import React, { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+
+import { autoSingInAction, changeDeviceAction } from 'redux/actions/userActions'
 
 import Layouts from 'components/Layouts/Layouts'
 import Main from 'components/pages/Main/Main'
 import NoPage from 'components/pages/NoPage/NoPage'
-import { userSelector } from 'redux/selectors/userSelectors'
-import { autoSingInAction, changeDeviceAction } from 'redux/actions/userActions'
 
 import './App.scss'
 
 const App = () => {
   const dispatch = useDispatch()
-
-  // useEffect(() => {
-  //   signIn(dispatch, { login: 'Y', password: 'X' })
-  // }, [])
-
-  // const x = useSelector(userSelector)
-
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) autoSingInAction(dispatch, { token })

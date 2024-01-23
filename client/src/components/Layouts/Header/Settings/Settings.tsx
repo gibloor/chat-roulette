@@ -5,6 +5,10 @@ import OutsideClickHandler from 'react-outside-click-handler';
 import { changeDeviceAction } from 'redux/actions/userActions'
 import { userDevicesSelector } from 'redux/selectors/userSelectors'
 
+import Selector from 'components/components/Selector/Selector';
+
+import cross from './cross.svg'
+
 import './styles.scss'
 
 type SettingsProps = {
@@ -38,43 +42,47 @@ const Settings = (props: SettingsProps) => {
       <OutsideClickHandler onOutsideClick={(e) => {
         if (e.target instanceof HTMLElement && 'alt' in e.target) {
           e.target.alt !== 'Settings' && props.close() 
+        } else {
+          props.close()
         }
       }}>
-        <div>
-          <p>Audio input</p>
-          
-          <select onChange={(e) => changeDevice(e.target.value, 'audioInput')} value={userDevices.audioInput}>
-            {audioInputDevices.map(device => (
-              <option value={device.deviceId}>
-                {device.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <img
+          src={cross}
+          className='settings__cross'
+          onClick={() => props.close()}
+        />
+        <Selector
+          label='Audio input'
+          value={userDevices.audioInput}
+          onChange={(value) => {
+            changeDevice(value, 'audioInput')
+          }}
+          options={audioInputDevices}
+          optionLabel='label'
+          optionValue='deviceId'
+        />
         
-        <div>
-          <p>Audio output</p>
+        <Selector
+          label='Audio output'
+          value={userDevices.audioOutput}
+          onChange={(value) => {
+            changeDevice(value, 'audioOutput')
+          }}
+          options={audioOutputDevices}
+          optionLabel='label'
+          optionValue='deviceId'
+        />
 
-          <select onChange={(e) => changeDevice(e.target.value, 'audioOutput')} value={userDevices.audioOutput}>
-            {audioOutputDevices.map(device => (
-              <option value={device.deviceId}>
-                {device.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <p>Video input</p>
-
-          <select onChange={(e) => changeDevice(e.target.value, 'videoInput')} value={userDevices.videoInput}>
-            {videoInputDevices.map(device => (
-              <option value={device.deviceId}>
-                {device.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <Selector
+          label='Video input'
+          value={userDevices.videoInput}
+          onChange={(value) => {
+            changeDevice(value, 'videoInput')
+          }}
+          options={videoInputDevices}
+          optionLabel='label'
+          optionValue='deviceId'
+        />
       </OutsideClickHandler>
     </div>
   )

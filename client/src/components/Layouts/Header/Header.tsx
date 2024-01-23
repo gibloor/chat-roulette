@@ -10,7 +10,7 @@ import reputation from './reputation.png'
 import activeUser from './activeUser.png'
 import settings from './settings.svg'
 import countries from './countries.svg'
-import logo from 'assets/logo.png'
+import logo from 'assets/logo-2.png'
 
 import './styles.scss'
 

@@ -3,16 +3,15 @@ import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
 import * as process from 'process'
 
-import App from './App'
 import store from 'redux/store'
+
+import App from './App'
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
-);
+)
 
-// window.global = window
 window.process = process
-// (window as any).Buffer = []
 
 root.render(
   <React.StrictMode>

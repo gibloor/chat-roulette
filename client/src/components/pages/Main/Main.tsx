@@ -82,7 +82,7 @@ const Main = () => {
   }
 
   useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: { deviceId: userDevices.videoInput }, audio: true })
+    navigator.mediaDevices.getUserMedia({ video: { deviceId: userDevices.videoInput }, audio: { deviceId: userDevices.audioInput } })
     .then((currentStream) => {
       setStream(currentStream)
       if (myVideo.current) {
@@ -158,6 +158,13 @@ const Main = () => {
     }
   }
 
+  useEffect(() => {
+    if (stream?.id && connectionRef.current) {
+      const currentVideoTrack = connectionRef.current?.streams[0].getVideoTracks()[0]
+      const newVideoTrack = stream.getVideoTracks()[0]
+      connectionRef.current.replaceTrack(currentVideoTrack, newVideoTrack, connectionRef.current?.streams[0])
+    }
+  }, [stream?.id])
 
   return (
     <div className='main'>

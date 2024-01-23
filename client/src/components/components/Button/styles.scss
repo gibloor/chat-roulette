@@ -6,9 +6,9 @@
   font-weight: bold;
   border-radius: 10px;
   cursor: pointer;
-  background-color: colors.$light-blue;
-  color: azure;
-  border: 1px solid azure;
+  background-color: colors.$interface-parts-background;
+  color: colors.$text-title;
+  border: 1px solid colors.$interface-border;
   opacity: 0.85;
 
   &__long {
