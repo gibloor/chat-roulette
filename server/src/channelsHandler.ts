@@ -11,6 +11,15 @@ type Restriction = {
 }
 
 const channelsHandler = (io: Server) => {
+  io.engine.on("connection_error", (err) => {
+    console.log(err.message)
+    console.log(err.context)
+  });
+
+  io.on('connect_error', (error) => {
+    console.error('Connection error:', error.message);
+  });
+
   io.on('connection', (socket) => {
     console.log('pup')
     socket.emit('getId', socket.id)

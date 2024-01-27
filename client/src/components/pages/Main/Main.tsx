@@ -28,9 +28,19 @@ const Main = () => {
   const user = useSelector(userSelector)
 
   useEffect(() => {
-    setSocket(io(process.env.REACT_APP_DOMAIN ? `${process.env.REACT_APP_DOMAIN}/socket.io` : 'https://192.168.0.38:8080'))
+    setSocket(io(
+      process.env.REACT_APP_DOMAIN ? `${process.env.REACT_APP_DOMAIN}` : 'https://192.168.0.38:8080'
+      // ,
+      // {
+      //   withCredentials: true
+      // }
+      ,
+      {
+        transports: ['websocket'],
+        path: '/socket.io'
+      }
+    ))
   }, [])
-
   
   useEffect(() => {
     navigator.mediaDevices.getUserMedia({ video: { deviceId: userDevices.videoInput }, audio: { deviceId: userDevices.audioInput } })
@@ -50,6 +60,7 @@ const Main = () => {
   }, [socket])
 
   const startCommunication = () => {
+    console.log(socket, socketId)
     if (socket && socketId) {
       try {
         const peer = new Peer({ initiator: true, trickle: false, stream })
