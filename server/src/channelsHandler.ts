@@ -12,7 +12,7 @@ type Restriction = {
 
 const channelsHandler = (io: Server) => {
   io.on('connection', (socket) => {
-    
+    console.log('pup')
     socket.emit('getId', socket.id)
 
     // socket.on('changeInterlocutor', () => {
@@ -24,6 +24,7 @@ const channelsHandler = (io: Server) => {
     })
 
     socket.on('startCommunication', async ({ signal, socketId, userId, country, reputation, restrictionOn }) => {
+      console.log('pip pup')
       const restriction: Restriction = {
         userId: { $ne: userId }
       }

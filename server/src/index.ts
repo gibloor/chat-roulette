@@ -23,7 +23,7 @@ const server = createServer({
 
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: '*', // process.env.REACT_APP_DOMAIN || 'https://www.humanroulette.net', // 
     methods: ['GET', 'POST']
   }
 })
@@ -32,6 +32,12 @@ const mongoString = process.env.DATABASE_URL
 
 if (mongoString) {
   mongoose.connect(mongoString)
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+  });
   
   const database = mongoose.connection
   database.on('error', (error) => {
@@ -49,8 +55,8 @@ app.use(bodyParser.json({ limit: '10mb' }))
 app.use(cors())
 app.use(express.json())
 
-app.use('/user', user)
-app.use('/interlocutor', interlocutor)
+app.use('/api/user', user)
+app.use('/api/interlocutor', interlocutor)
 
 channelsHandler(io)
 

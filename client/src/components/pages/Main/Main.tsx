@@ -28,8 +28,26 @@ const Main = () => {
   const user = useSelector(userSelector)
 
   useEffect(() => {
-    setSocket(io('https://192.168.0.38:8080'))
+    setSocket(io(process.env.REACT_APP_DOMAIN ? `${process.env.REACT_APP_DOMAIN}/socket.io` : 'https://192.168.0.38:8080'))
   }, [])
+
+  
+  useEffect(() => {
+    navigator.mediaDevices.getUserMedia({ video: { deviceId: userDevices.videoInput }, audio: { deviceId: userDevices.audioInput } })
+    .then((currentStream) => {
+      setStream(currentStream)
+      if (myVideo.current) {
+        myVideo.current.srcObject = currentStream
+      }
+      setBrokenCamera(false)
+    }).catch(() => setBrokenCamera(true))
+  }, [userDevices.videoInput, userDevices.audioInput])
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('getId', (id) => setSocketId(id))
+    }
+  }, [socket])
 
   const startCommunication = () => {
     if (socket && socketId) {
@@ -80,23 +98,6 @@ const Main = () => {
       }
     }
   }
-
-  useEffect(() => {
-    navigator.mediaDevices.getUserMedia({ video: { deviceId: userDevices.videoInput }, audio: { deviceId: userDevices.audioInput } })
-    .then((currentStream) => {
-      setStream(currentStream)
-      if (myVideo.current) {
-        myVideo.current.srcObject = currentStream
-      }
-      setBrokenCamera(false)
-    }).catch(() => setBrokenCamera(true))
-  }, [userDevices.videoInput])
-
-  useEffect(() => {
-    if (socket) {
-      socket.on('getId', (id) => setSocketId(id))
-    }
-  }, [socket])
 
   useEffect(() => {
     if (socket && stream) {
@@ -158,13 +159,25 @@ const Main = () => {
     }
   }
 
+
   useEffect(() => {
     if (stream?.id && connectionRef.current) {
       const currentVideoTrack = connectionRef.current?.streams[0].getVideoTracks()[0]
+      const currentAudioTrack = connectionRef.current?.streams[0].getAudioTracks()[0]
       const newVideoTrack = stream.getVideoTracks()[0]
+      const newAudioTrack = stream.getAudioTracks()[0]
       connectionRef.current.replaceTrack(currentVideoTrack, newVideoTrack, connectionRef.current?.streams[0])
+      connectionRef.current.replaceTrack(currentAudioTrack, newAudioTrack, connectionRef.current?.streams[0])
     }
   }, [stream?.id])
+
+  // useEffect(() => {
+  //   if (interlocutorVideo.current && userDevices.audioOutput) {
+  //     try {
+  //     } catch (err) {
+  //     }
+  //   }
+  // }, [userDevices.audioOutput])
 
   return (
     <div className='main'>
@@ -176,6 +189,7 @@ const Main = () => {
             playsInline
             muted
             autoPlay
+            
           />
           {brokenCamera && <div>Broken camera</div>}
         </div>

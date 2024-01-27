@@ -62,7 +62,7 @@ const Settings = (props: SettingsProps) => {
           optionValue='deviceId'
         />
         
-        <Selector
+        {/* <Selector
           label='Audio output'
           value={userDevices.audioOutput}
           onChange={(value) => {
@@ -71,7 +71,7 @@ const Settings = (props: SettingsProps) => {
           options={audioOutputDevices}
           optionLabel='label'
           optionValue='deviceId'
-        />
+        /> */}
 
         <Selector
           label='Video input'
