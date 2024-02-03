@@ -16,7 +16,6 @@ type Restriction = {
 interlocutor.post('/test/startCommunication/notInDB', async (req, res) => {
   try {
     const { from, country, reputation, restrictionOn } = req.body
-    console.log('startCommunication notInDB', from, country, reputation, restrictionOn)
 
     // const newInterlocutor = new Interlocutor({
     //   userId: from,

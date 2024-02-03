@@ -29,11 +29,7 @@ const Main = () => {
 
   useEffect(() => {
     setSocket(io(
-      process.env.REACT_APP_DOMAIN ? `${process.env.REACT_APP_DOMAIN}` : 'https://192.168.0.38:8080'
-      // ,
-      // {
-      //   withCredentials: true
-      // }
+      process.env.REACT_APP_DOMAIN ? `${process.env.REACT_APP_DOMAIN}` : 'https://localhost:8080'
       ,
       {
         transports: ['websocket'],
@@ -181,14 +177,6 @@ const Main = () => {
       connectionRef.current.replaceTrack(currentAudioTrack, newAudioTrack, connectionRef.current?.streams[0])
     }
   }, [stream?.id])
-
-  // useEffect(() => {
-  //   if (interlocutorVideo.current && userDevices.audioOutput) {
-  //     try {
-  //     } catch (err) {
-  //     }
-  //   }
-  // }, [userDevices.audioOutput])
 
   return (
     <div className='main'>

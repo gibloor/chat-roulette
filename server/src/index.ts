@@ -23,9 +23,8 @@ const server = createServer({
 
 const io = new Server(server, {
   cors: {
-    origin: '*', // process.env.REACT_APP_DOMAIN || 'https://www.humanroulette.net', // 
+    origin: '*',
     methods: ['GET', 'POST'],
-    // credentials: true
   }
 })
 

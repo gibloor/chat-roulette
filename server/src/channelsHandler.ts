@@ -21,12 +21,7 @@ const channelsHandler = (io: Server) => {
   });
 
   io.on('connection', (socket) => {
-    console.log('pup')
     socket.emit('getId', socket.id)
-
-    // socket.on('changeInterlocutor', () => {
-      // socket.broadcast.emit('callEnded')
-    // })
 
     socket.on("answerCall", ({ signal, socketId, userId }) => {
       io.to(socketId).emit("callAccepted", { signal, userId})

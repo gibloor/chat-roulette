@@ -1,1 +1,1 @@
-export const DOMAIN = process.env.REACT_APP_DOMAIN ? `${process.env.REACT_APP_DOMAIN}/api` : 'https://192.168.0.38:8080/api' // 'https://192.168.0.38:8080'
+export const DOMAIN = process.env.REACT_APP_DOMAIN ? `${process.env.REACT_APP_DOMAIN}/api` : 'https://localhost:8080/api'

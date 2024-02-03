@@ -25,8 +25,6 @@ const signIn = async (dispatch: Dispatch, props: SignInProps) => {
   await dispatch(authorization({ name: props.name, reputation: props.reputation, id: props.id }))
 }
 
-// export const signUp = async () => {  }
-
 export const signOut = async () => {
 
 }
