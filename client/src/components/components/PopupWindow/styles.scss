@@ -31,3 +31,12 @@
   flex-direction: column;
   gap: 10px;
 }
+
+@media (width < 600px) {
+  .popup-window {
+    max-width: 95vw;
+    right: 2.5vw;
+    top: 5rem;
+    box-sizing: border-box;
+  }
+}

@@ -50,3 +50,13 @@
     opacity: 1;
   }
 }
+
+@media(width < 600px) {
+  .countries-selector {
+    &__flags {
+      max-width: 300px;
+      width: 100%;
+      justify-content: space-around;
+    }
+  }
+}

@@ -50,17 +50,18 @@ const channelsHandler = (io: Server) => {
 
         await Interlocutor.deleteOne(interlocutor._id)
       } else {
-        console.log(userId, country)
-        const newInterlocutor = new Interlocutor({
-          socketId: socketId,
-          userId: userId,
-          country: country,
-          reputation: reputation,
-          restrictionOn: restrictionOn,
-          interlocutorCountries: interlocutorCountries,
-          searchStartTime: new Date(),
-        })
-        await newInterlocutor.save()
+        if (userId && country) {
+          const newInterlocutor = new Interlocutor({
+            socketId: socketId,
+            userId: userId,
+            country: country,
+            reputation: reputation,
+            restrictionOn: restrictionOn,
+            interlocutorCountries: interlocutorCountries,
+            searchStartTime: new Date(),
+          })
+          await newInterlocutor.save() 
+        }
       }
     })
   })

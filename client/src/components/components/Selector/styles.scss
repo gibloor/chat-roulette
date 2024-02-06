@@ -70,3 +70,9 @@
     opacity: 1;
   }
 }
+
+@media (width < 600px) {
+  .selector {
+    width: 100%;
+  }
+}

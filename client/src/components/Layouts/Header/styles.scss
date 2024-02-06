@@ -76,3 +76,9 @@
     transform: rotate(375deg);
   }
 }
+
+@media (width < 600px) {
+  .header {
+    padding: 0.5rem;
+  }
+}
