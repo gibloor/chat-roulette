@@ -6,9 +6,11 @@ import html2canvas from 'html2canvas'
 import axios from 'axios'
 
 import { DOMAIN } from 'redux/reduxVariables'
-import { userDevicesSelector, userSelector } from 'redux/selectors/userSelectors'
+import { userDevicesSelector, userInterlocutorCountriesSelector, userSelector } from 'redux/selectors/userSelectors'
 
 import Button from 'components/components/Button/Button'
+
+import noise from './noise.gif'
 
 import './styles.scss'
 
@@ -26,11 +28,11 @@ const Main = () => {
 
   const userDevices = useSelector(userDevicesSelector)
   const user = useSelector(userSelector)
+  const interlocutorCountries = useSelector(userInterlocutorCountriesSelector)
 
   useEffect(() => {
     setSocket(io(
-      process.env.REACT_APP_DOMAIN ? `${process.env.REACT_APP_DOMAIN}` : 'https://localhost:8080'
-      ,
+      process.env.REACT_APP_DOMAIN ? `${process.env.REACT_APP_DOMAIN}` : 'https://localhost:8080',
       {
         transports: ['websocket'],
         path: '/socket.io'
@@ -55,18 +57,33 @@ const Main = () => {
     }
   }, [socket])
 
-  const startCommunication = () => {
-    console.log(socket, socketId)
+  const startCommunication = (restrictionOn = true) => {
     if (socket && socketId) {
       try {
+        const withoutRestriction = setTimeout(() => {
+          if (restrictionOn) {
+            connectionRef.current?.destroy(new Error('Cleaning'))
+            startCommunication(false)
+          }
+        }, 10000)
+
         const peer = new Peer({ initiator: true, trickle: false, stream })
         
         socket.off('callAccepted')
         connectionRef.current?.destroy(new Error('External connection'))
 
         peer.on('signal', (signal) => {
-          socket.emit('startCommunication', { signal, socketId: socketId, userId: user.id, country: 'pl', reputation: user.reputation, restrictionOn: true })
+          socket.emit('startCommunication', {
+            signal,
+            socketId: socketId,
+            userId: user.id,
+            country: user.country,
+            interlocutorCountries,
+            reputation: user.reputation,
+            restrictionOn
+          })
         })
+
         peer.on('stream', (currentStream) => {
           if (interlocutorVideo.current) interlocutorVideo.current.srcObject = currentStream
         })
@@ -74,11 +91,14 @@ const Main = () => {
         socket.on('callAccepted', ({ signal, userId }) => {
           setInterlocutorId(userId)
           peer.signal(signal)
+          clearTimeout(withoutRestriction)
         })
 
         let destructionСause = ''
 
         peer.on('close', () => {
+          setInterlocutorId('')
+          clearTimeout(withoutRestriction)
           console.log('initiator', destructionСause)
           
           if (destructionСause == 'External connection') {
@@ -125,6 +145,7 @@ const Main = () => {
         let destructionСause = ''
 
         peer.on('close', () => {
+          setInterlocutorId('')
           console.log('non initiator', destructionСause)
 
           if (destructionСause === 'Cleaning') {
@@ -149,23 +170,25 @@ const Main = () => {
   }, [socketId, stream?.id])
 
   const stop = () => {
+    setInterlocutorId('')
     connectionRef.current?.destroy(new Error('Manually stopped'))
     socket?.off('connectInterlocutorToUser')
   }
 
   const ban = async () => {
     if (interlocutorVideo.current) {
-      const videoElement = interlocutorVideo.current
-
-      const canvas = await html2canvas(videoElement)
-      const screenshotDataUrl = await canvas.toDataURL('image/png')
-      await axios.post(`${DOMAIN}/user/ban`, {
-        picture: screenshotDataUrl,
-        userId: interlocutorId
+      const canvas = await html2canvas(interlocutorVideo.current)
+      setTimeout(async () => {
+        const screenshotDataUrl = await canvas.toDataURL('image/png')
+        await axios.post(`${DOMAIN}/user/ban`, {
+          picture: screenshotDataUrl,
+          userId: interlocutorId
+        })
       })
     }
+    connectionRef.current?.destroy(new Error('Manually stopped'))
+    startCommunication()
   }
-
 
   useEffect(() => {
     if (stream?.id && connectionRef.current) {
@@ -188,19 +211,24 @@ const Main = () => {
             playsInline
             muted
             autoPlay
-            
           />
-          {brokenCamera && <div>Broken camera</div>}
+          {brokenCamera && <div className='main__broken-camera'>Broken camera</div>}
         </div>
 
-        <div className={`main__video_container ${chatStarted ? '' : 'hide'} ${chatStarted ? 'main__video_container_half-size' : ''}`}>
+        <div className={`main__video_container ${chatStarted ? 'main__video_container_half-size' : 'hide'}`}>
           <video
             className={`main__video`}
             ref={interlocutorVideo}
             playsInline
             autoPlay
           />
+          
+          <img
+            className={`main__noise ${interlocutorId ? 'hide' : ''}`}
+            src={noise} alt='noise'
+          />
         </div>
+        
       </div>
 
       {!chatStarted ?
@@ -217,7 +245,7 @@ const Main = () => {
         <div className='main__action-buttons'>
           <Button
             text='Next'
-            onClick={startCommunication}
+            onClick={() => { stop(); startCommunication() }}
             className=''
           />
           <Button
@@ -229,6 +257,7 @@ const Main = () => {
             text='Ban'
             onClick={ban}
             className=''
+            disabled={!interlocutorId}
           />
         </div>
       }

@@ -1,0 +1,33 @@
+@use '~styles/colors' as colors;
+
+.popup-window {
+  position: absolute;
+  top: 6.5rem;
+  right: 3rem;
+  background-color: colors.$interface-background;
+  border: 1px solid white;
+  padding: 2rem;
+  border-radius: 10px;
+  z-index: 999;
+
+
+  &__cross {
+    position: absolute;
+    height: 25px;
+    right: 15px;
+    top: 15px;
+    cursor: pointer;
+  }
+
+  &__cross:hover {
+    height: 27px;
+    right: 14px;
+    top: 14px;
+  }
+}
+
+.popup-window > div {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

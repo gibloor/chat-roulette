@@ -56,6 +56,16 @@
   &__settings:hover {
     animation: spin 2s linear infinite;
   }
+
+
+
+  &__active-user {
+    // margin-right: 10px;
+  }
+
+  &__sign-out {
+    color: colors.$text-title
+  }
 }
 
 @keyframes spin {

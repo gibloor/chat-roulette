@@ -13,11 +13,21 @@ export type Device = {
   id: string
 }
 
+export type Country = {
+  country: string
+}
+
+export type IntrelocutorCountries = {
+  interlocutorCountries: string[]
+}
+
 type InitialState = SignIn & {
-  [key: string]: string | number
+  [key: string]: string | number | string[]
   videoInput: string
   audioInput: string
   audioOutput: string
+  country: string
+  interlocutorCountries: string[]
 }
 
 const initialState: InitialState = {
@@ -27,6 +37,8 @@ const initialState: InitialState = {
   videoInput: '',
   audioInput: '',
   audioOutput: '',
+  country: '',
+  interlocutorCountries: []
 }
 
 export const userSlice = createSlice({
@@ -39,16 +51,27 @@ export const userSlice = createSlice({
         ...action.payload,
       }
     },
-    deauthorization: () => {
-
-    },
     changeDevice: (state, action: PayloadAction<Device>) => {
       state[action.payload.name] = action.payload.id
+    },
+    setCountry: (state, action: PayloadAction<Country>) => {
+      state.country = action.payload.country
+    },
+    setIntrelocturCountries: (state, action: PayloadAction<IntrelocutorCountries>) => {
+      state.interlocutorCountries = action.payload.interlocutorCountries
+    },
+    signOut: (state) => {
+      localStorage.removeItem('token')
+
+      return {
+        ...state,
+        ...initialState
+      }
     }
   },
 })
 
-export const { authorization, deauthorization, changeDevice } = userSlice.actions
+export const { authorization, changeDevice, setCountry, setIntrelocturCountries, signOut } = userSlice.actions
 
 export const selectUser = (state: RootState) => state.user
 

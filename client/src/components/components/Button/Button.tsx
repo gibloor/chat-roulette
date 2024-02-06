@@ -13,6 +13,7 @@ type ButtonProps = {
 const Button = (props: ButtonProps) => {
 
   return (
+    <>
     <button
       onClick={props.disabled ? () => {} : props.onClick}
       className={`button ${props.className} ${props.style ? `button__${props.style}` : ''}`}
@@ -20,6 +21,7 @@ const Button = (props: ButtonProps) => {
     >
       {props.text}
     </button>
+    </>
   )
 }
 

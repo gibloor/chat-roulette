@@ -7,6 +7,8 @@ const getDevices = (state: RootState) => ({
   audioOutput: state.user.audioOutput,
   audioInput: state.user.audioInput
 })
+const getInterlocutorCountries = (state: RootState) => state.user.interlocutorCountries
 
 export const userSelector = createSelector(getUser, (info) => info)
 export const userDevicesSelector = createSelector(getDevices, (info) => info)
+export const userInterlocutorCountriesSelector = createSelector(getInterlocutorCountries, (info) => info)

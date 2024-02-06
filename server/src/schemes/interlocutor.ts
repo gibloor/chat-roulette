@@ -13,6 +13,9 @@ const interlocutorSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  interlocutorCountries: {
+    type: Array,
+  },
   reputation: {
     type: Number,
   },

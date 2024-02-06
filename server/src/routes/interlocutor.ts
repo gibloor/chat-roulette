@@ -35,7 +35,6 @@ interlocutor.post('/test/startCommunication/notInDB', async (req, res) => {
     if (reputation) restriction.reputation = reputation
 
     const search = await Interlocutor.findOne(restriction).exec()
-    await console.log(search)
   } catch (error: any) {
     console.error(error)
     res.status(400).json({ message: error.message })

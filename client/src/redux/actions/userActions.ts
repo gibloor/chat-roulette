@@ -1,7 +1,7 @@
 import { Dispatch } from "@reduxjs/toolkit"
 import axios from "axios"
 
-import { authorization, changeDevice, Device } from "redux/reducers/userReducer"
+import { authorization, changeDevice, Country, Device, IntrelocutorCountries, setCountry, setIntrelocturCountries, signOut } from "redux/reducers/userReducer"
 import { DOMAIN } from "redux/reduxVariables"
 
 type GoogleSignInProps = {
@@ -25,8 +25,8 @@ const signIn = async (dispatch: Dispatch, props: SignInProps) => {
   await dispatch(authorization({ name: props.name, reputation: props.reputation, id: props.id }))
 }
 
-export const signOut = async () => {
-
+export const signOutAction = async (dispatch: Dispatch) => {
+  await dispatch(signOut())
 }
 
 export const googleSignInAction = async (dispatch: Dispatch, props: GoogleSignInProps ) => {
@@ -55,4 +55,12 @@ export const autoSingInAction = async (dispatch: Dispatch, props: Token) => {
   } catch (err) {
     console.error(err)
   }
+}
+
+export const setCountryAction = async (dispatch: Dispatch, props: Country) => {
+  await dispatch(setCountry(props))
+}
+
+export const setIntrelocutorCountriesAction = async (dispatch: Dispatch, props: IntrelocutorCountries) => {
+  await dispatch(setIntrelocturCountries(props))
 }

@@ -77,7 +77,7 @@ user.post('/googleSignIn', async (req, res) => {
       }
     }
   } catch (error: any) {
-    console.log(error)
+    console.error(error)
     res.status(400).json({message: error.message})
   }
 })
@@ -103,7 +103,7 @@ user.post('/ban', async (req, res) => {
     })
 
   } catch (error: any) {
-    console.log(error.message)
+    console.error(error.message)
     res.status(400).json({message: error.message})
   }
 })

@@ -1,0 +1,52 @@
+@use '~styles/colors' as colors;
+
+.countries-selector {
+  &__title {
+    color: colors.$text-title;
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 8px;
+  }
+  
+  &__select-all {
+    cursor: pointer;
+    color: colors.$text-title;
+    border: 1px solid colors.$text-title;
+    width: 70px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    opacity: 0.85;
+  }
+
+  &__select-all:hover {
+    opacity: 1;
+  }
+
+  &__flags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 300px;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  &__flag {
+    cursor: pointer;
+    height: 40px;
+    width: 70px;
+    opacity: 0.5;
+
+    &-active {
+      opacity: 1;
+    }
+  }
+
+  &__flag:hover {
+    opacity: 0.75;
+  }
+
+  &__flag-active:hover {
+    opacity: 1;
+  }
+}
